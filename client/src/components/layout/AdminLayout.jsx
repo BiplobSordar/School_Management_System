@@ -36,7 +36,7 @@ const AdminLayout = () => {
 
         {/* Main Content */}
         <div
-            className={`flex-1 p-5 bg-gray-100 transition-all duration-300 ${
+            className={`flex-1 overflow-y-auto scrollbar-hidden p-5 bg-gray-100 transition-all duration-300 ${
                 isSidebarOpen ? "opacity-100 sm:opacity-100" : "opacity-100"
             }`}
             onClick={() => isSidebarOpen && setIsSidebarOpen(false)} // Close sidebar when clicking content

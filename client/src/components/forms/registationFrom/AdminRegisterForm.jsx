@@ -42,6 +42,7 @@ const AdminRegistrationForm = () => {
 
 
   const onSubmit = async (formData) => {
+    
     try {
       const response = await adminRegistration(formData).unwrap();;
   

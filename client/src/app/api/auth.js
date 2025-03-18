@@ -4,7 +4,7 @@ import { userLoggedIn, userLoggedOut } from '../features/auth/authSlice';
 export const authApi = createApi({
     reducerPath: 'authApi',
     baseQuery: fetchBaseQuery({
-        baseUrl: 'http://localhost:8000/api/v1/auth',
+        baseUrl: 'http://localhost:3421/api/v1/auth',
         credentials: 'include',
     }),
     endpoints: (builder) => ({
@@ -88,6 +88,15 @@ export const authApi = createApi({
 
             }
         }),
+        getProfile: builder.query({
+            query: () => ({
+                url: '/profile',
+                method: 'GET'
+            }),
+
+
+        }),
+
         logout: builder.mutation({
             query: () => ({
                 url: '/logout',
@@ -99,12 +108,59 @@ export const authApi = createApi({
                     const result = await queryFulfilled
 
                     dispatch(userLoggedOut())
+                    dispatch(authApi.util.resetApiState())
                 } catch (error) {
                     console.log(error)
                 }
 
             }
+        }),
+        uploadProfileImage: builder.mutation({
+            query: (file) => {
+                const formData = new FormData();
+                formData.append("image", file); // Append the file to FormData
+
+                return {
+                    url: '/profile/upload_profile_image',
+                    method: 'POST',
+                    body: formData,
+                }
+
+            },
+            async onQueryStarted(_, { queryFulfilled, dispatch }) {
+
+                try {
+                    const result = await queryFulfilled
+
+                    dispatch(userLoggedIn(result?.data?.user))
+
+                } catch (error) {
+                    console.log(error)
+                }
+
+            }
+        }),
+        updateProfileDetails: builder.mutation({
+            query: (formData) => ({
+                url: '/update_profile',
+                method: 'PUT',
+                body: formData,
+            }),
+            async onQueryStarted(_, { queryFulfilled, dispatch }) {
+                try {
+                    await queryFulfilled
+                    // dispatch(authApi.endpoints.loadUser.initiate()).unwrap()
+                    setTimeout(() => {
+                        dispatch(authApi.endpoints.loadUser.initiate(null, { forceRefetch: true }));
+                    }, 1500);
+                   
+                } catch (error) {
+                    console.error("Error triggering another query:", error);
+                }
+            }
+
         })
+
     }),
 });
 
@@ -115,6 +171,9 @@ export const {
     useTeacherRegistrationMutation,
     useUserLoginMutation,
     useStudentLoginMutation,
-   useLoadUserQuery,
-   useLogoutMutation
+    useLoadUserQuery,
+    useLogoutMutation,
+    useGetProfileQuery,
+    useUploadProfileImageMutation,
+    useUpdateProfileDetailsMutation
 } = authApi

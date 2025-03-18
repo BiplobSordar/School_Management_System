@@ -5,7 +5,8 @@ import { query } from '../../config/database.js';
 import { generateUniqueAdmissionNumber } from '../../utils/generateAdmissonNumber.js';
 import { hashPassword } from '../../utils/hashPassword.js';
 import { generateToken } from '../../utils/generateJwtToken.js';
-
+import cloudinary from 'cloudinary';
+import { distroyFile, extractPublicId, uploadFile } from '../../config/cloudinaryConfig.js';
 
 
 
@@ -177,6 +178,7 @@ export const registerParent = async (req, res) => {
             return res.status(400).json({ message: "Student Not Found. Try again with another Admisson Number." });
         }
 
+
         const parentQuery = `
            INSERT INTO parents (user_id, child_admission_number)
 VALUES ($1, $2)
@@ -240,7 +242,7 @@ export const login = async (req, res) => {
         }
 
         //   generate Token
-        const token = generateToken(user.id, user.email)
+        const token = generateToken(user.id, user.email, user.role)
 
         res.cookie('token', token, {
             httpOnly: true,
@@ -295,7 +297,7 @@ export const studentLogin = async (req, res) => {
         }
 
         //   generate Token
-        const token = generateToken(student.id, student.email)
+        const token = generateToken(student.id, student.email, student.role)
 
         res.cookie('token', token, {
             httpOnly: true,
@@ -363,6 +365,156 @@ export const logout = async (_, res) => {
     }
 }
 
+
+export const getProfile = async (req, res) => {
+    try {
+        const userRole = `${req.role}s`
+       
+
+        if (!req.id && !req.role) {
+            return res.status(401).json({ message: "Unauthorized" });
+        }
+
+
+        const getUserQuery = `SELECT users.*, ${userRole}.*, addresses.* 
+FROM users
+INNER JOIN ${userRole} ON ${userRole}.user_id = users.id
+INNER JOIN addresses ON addresses.user_id = users.id
+WHERE users.id = $1;`
+
+        const { rows } = await query(getUserQuery, [req.id])
+      
+
+        // Check if user exists
+        if (rows.length === 0) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // Return user profile
+        res.status(200).json(rows[0]);
+    } catch (error) {
+        console.error("Error fetching user profile:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+};
+
+
+
+
+
+
+
+export const uploadProfileImage = async (req, res) => {
+    if (!req.id && !req.role) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+    try {
+        const { image } = req.body;
+
+
+        const { rows: imageExist } = await query(`select profile_image from users where id= $1`, [req.id])
+      
+        if (imageExist[0].profile_image) {
+            const publicId = extractPublicId(imageExist[0].profile_image)
+            console.log(publicId, 'thsi is the publci id')
+            const result = await distroyFile(publicId)
+            console.log(result, 'thsi si the result after delete')
+
+        }
+
+
+        // Uploading the file buffer to Cloudinary using the upload method
+        const result = await uploadFile(image)
+
+
+        const { rows } = await query(`update users set profile_image=$1 where id =$2 RETURNING *`, [result?.secure_url, req.id])
+
+
+        return res.status(200).json({
+            message: 'File uploaded successfully',
+            // url: result.secure_url, // Cloudinary URL for the uploaded file
+            user: rows[0],
+            success: true
+        });
+    } catch (error) {
+        console.error('Error uploading to Cloudinary:', error);
+        return res.status(500).json({ message: 'Upload failed', error: error.message });
+    }
+};
+
+
+
+export const editUser = async (req, res) => {
+
+    const { first_name, last_name, email, password, phone, blood_group, gender, date_of_birth, street_address, city, state, postal_code } = req.body
+
+    const user_id = req.id
+    if (!req.id && !req.role) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    try {
+
+        const user = await userExist(req, res)
+
+        await query(`
+            UPDATE users 
+            SET 
+              first_name = $1, 
+              last_name = $2, 
+              email = $3, 
+              phone = $4, 
+              blood_group = $5, 
+              gender = $6, 
+              date_of_birth = $7
+            WHERE id = $8
+          `, [first_name, last_name, email, phone, blood_group, gender, date_of_birth, user.id]);
+          
+
+        await query(`
+            UPDATE addresses 
+            SET 
+              street_address = $1, 
+              city = $2, 
+              state = $3, 
+              postal_code = $4
+            WHERE user_id = $5
+          `, [street_address, city, state, postal_code, user.id]);
+
+
+        // await getProfile(req)
+        return res.status(200).json({ success: true, message: 'User Updated Successfully?' })
+
+
+
+
+    } catch (error) {
+        console.error("Error Updateing User Details:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+
+
+}
+
+
+export const userExist = async (req, res) => {
+
+
+    try {
+        const { rows } = await query(`select * from users where id=$1`, [req.id])
+
+        if (rows.length === 0) {
+            return res.status(404).json({ message: 'User Not Found', success: false })
+        }
+
+        return rows[0]
+
+
+    } catch (error) {
+        console.error("Error fetching user Details:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+}
 
 
 

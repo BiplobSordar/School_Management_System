@@ -10,18 +10,22 @@ import LoadingPage from "./pages/Loading";
 import ErrorPage from "./pages/Error";
 import LandingPage from "./pages/LandingPage";
 import { ToastProvider } from "./context/ToastContext";
-import AdminLayout from "./components/layout/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
-import StudentLayout from "./components/layout/StudentLayout";
 import StudentDashboard from "./pages/student/StudentDashboard";
-import TeacherLayout from "./components/layout/TeacherLayout";
 import TeacherDashboard from "./pages/teacher/TeacherDashboard";
-import ParentLayout from "./components/layout/ParentLayout";
 import ParentDashboard from "./pages/parent/ParentDashboard";
 import { authApi } from "./app/api/auth";
-import PrivateRoute from "./components/PrivateRoute";
 import ProtectedRoute from "./components/ProtectedRoute";
-// import PrivateRoute from "./components/PrivateRoute"; // 👈 Create this component
+import UserProfilePage from "./pages/UserProfile";
+import RoleBaseLayout from "./components/layout/RoleBaseLayout";
+import { ModalProvider } from "./context/ModalContext";
+import GlobalModal from "./components/Modal";
+
+// import AdminLayout from "./components/layout/AdminLayout";
+// import StudentLayout from "./components/layout/StudentLayout";
+// import ParentLayout from "./components/layout/ParentLayout";
+// import TeacherLayout from "./components/layout/TeacherLayout";
+
 
 
 const appRoute = createBrowserRouter([
@@ -35,49 +39,71 @@ const appRoute = createBrowserRouter([
       { path: "/loading", element: <LoadingPage /> },
       { path: "/", element: <LandingPage /> },
       {
-        path: "admin",
+        path: "/admin",
         element: (
           <ProtectedRoute role='admin'>
-            <AdminLayout />
+            {/* <AdminLayout /> */}
+            <RoleBaseLayout />
 
           </ProtectedRoute>
 
 
         ),
-        children: [{ path: "", element: <AdminDashboard /> }],
+        children: [
+          { path: "", element: <AdminDashboard /> },
+          { path: '/admin/profile', element: <UserProfilePage /> }
+
+        ],
       },
       {
-        path: "student",
+        path: "/student",
         element: (
           <ProtectedRoute role='student'>
 
-            <StudentLayout />
+            {/* <StudentLayout /> */}
+            <RoleBaseLayout />
           </ProtectedRoute>
 
         ),
-        children: [{ path: "", element: <StudentDashboard /> }],
+        children: [
+          { path: "", element: <StudentDashboard /> },
+          { path: '/student/profile', element: <UserProfilePage /> }
+
+        ],
       },
       {
-        path: "teacher",
+        path: "/teacher",
         element: (
           <ProtectedRoute role='teacher'>
 
-            <TeacherLayout />
+            {/* <TeacherLayout /> */}
+            <RoleBaseLayout />
+
           </ProtectedRoute>
 
         ),
-        children: [{ path: "", element: <TeacherDashboard /> }],
+        children: [
+          { path: "", element: <TeacherDashboard /> },
+          { path: '/teacher/profile', element: <UserProfilePage /> }
+
+
+        ],
       },
       {
-        path: "parent",
+        path: "/parent",
         element: (
           <ProtectedRoute role='parent'>
 
-            <ParentLayout />
+            {/* <ParentLayout /> */}
+            <RoleBaseLayout />
           </ProtectedRoute>
 
         ),
-        children: [{ path: "", element: <ParentDashboard /> }],
+        children: [
+          { path: "", element: <ParentDashboard /> },
+          { path: '/parent/profile', element: <UserProfilePage /> }
+
+        ],
       },
     ],
   },
@@ -100,7 +126,10 @@ function App() {
   if (loading) return <LoadingPage />
   return (
     <ToastProvider>
-      <RouterProvider router={appRoute} />
+      <ModalProvider>
+        <RouterProvider router={appRoute} />
+        <GlobalModal />
+      </ModalProvider>
     </ToastProvider>
   );
 }

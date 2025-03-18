@@ -10,11 +10,11 @@ const layouts = {
 };
 
 const Sidebar = ({ role }) => {
-    
+
     return (
-       <>
-          <h2 className="text-2xl font-bold mb-5">{capitalizeFirstLetter(role)} Panel</h2>
-            <nav >
+        <div className="fixed h-screen">
+            <h2 className="text-2xl font-bold mb-5">{capitalizeFirstLetter(role)} Panel</h2>
+            <nav className="h-screen " >
                 <ul className="space-y-3">
                     {layouts[role].map((item) => (
                         <li
@@ -26,10 +26,11 @@ const Sidebar = ({ role }) => {
                     ))}
                 </ul>
             </nav>
-       </>
-         
-       
-       
+        </div>
+
+
+
+
     );
 };
 

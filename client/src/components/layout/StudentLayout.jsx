@@ -5,10 +5,10 @@ import { Menu, X } from "lucide-react";
 const StudentLayout = () => {
    const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   return (
-    <div className="flex h-screen">
+    <div className="flex min-h-screen">
     {/* Sidebar */}
     <aside
-        className={`fixed top-0 left-0 h-screen w-60 bg-gray-900 text-white p-5 shadow-lg transition-transform duration-300 ease-in-out 
+        className={`fixed top-0 left-0 full w-60 bg-gray-900 text-white p-5 shadow-lg transition-transform duration-300 ease-in-out 
             ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} 
             sm:translate-x-0 sm:static sm:w-60`}
     >
@@ -45,3 +45,8 @@ const StudentLayout = () => {
 }
 
 export default StudentLayout
+
+
+
+
+

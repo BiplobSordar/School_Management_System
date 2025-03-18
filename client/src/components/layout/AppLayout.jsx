@@ -7,35 +7,12 @@ import { useSelector } from 'react-redux'
 const AppLayout = () => {
     const user=useSelector((state)=>state.auth.user)
 
-
-
-
-    // useEffect(()=>{
-    //     switch (user.role) {
-    //         case "admin":
-    //           navigate("/admin");
-    //           break;
-    //         case "student":
-    //           navigate("/student");
-    //           break;
-    //         case "teacher":
-    //           navigate("/teacher");
-    //           break;
-    //         case "parent":
-    //           navigate("/parent");
-    //           break;
-    //         default:
-    //           navigate("/");
-    //       }
-    // },[])
-
-
-
-
-   
     return (
-        <>
-            <header>
+        
+          
+        
+        <div className='scrollbar-hidden'>
+  <header>
                 <Navbar />
             </header>
             <main>
@@ -45,7 +22,7 @@ const AppLayout = () => {
                 <Footer />
 
             </footer>
-        </>
+        </div>
     )
 }
 

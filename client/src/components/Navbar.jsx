@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 // import  Link  from "react-router-dom";
 import { Menu, X } from "lucide-react"; // For icons (install lucide-react if not installed)
 import { Link, useNavigate } from "react-router-dom";
@@ -8,7 +8,18 @@ import { useSelector } from "react-redux";
 import { capitalizeFirstLetter } from "@/lib/utils";
 import { useLogoutMutation } from "@/app/api/auth";
 const Navbar = () => {
+  const [isDropdown, setIsDropdown] = useState(false);
+
+
+
+  const navLinks = [
+    { path: "/students", label: "Students" },
+    { path: "/teachers", label: "Teachers" },
+    { path: "/classes", label: "Classes" },
+    { path: "/exams", label: "Exams" },
+  ];
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const { user, isAuthenticated } = useSelector((state) => state.auth)
 
   const [logout] = useLogoutMutation()
@@ -18,38 +29,65 @@ const Navbar = () => {
     await logout()
   }
 
+
+
+
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      setIsDropdown(width >= 750 && width <= 1130);
+    };
+
+    window.addEventListener("resize", handleResize);
+    handleResize(); // Initial check
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <nav className="bg-gray-800 text-white shadow-md">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
+          <NavLink>
+
+          </NavLink>
           <div className="flex items-center space-x-2">
-            <img src={logo} alt="School Logo" className="h-10 w-10" />
-            <span className="text-xl font-bold text-white">School SMS</span>
+            <NavLink to={'/'}>
+              <img src={logo} alt="School Logo" className="h-10 w-10" />
+            </NavLink>
+            <NavLink to={'/'}>
+              <span className="text-xl font-bold text-white">School SMS</span>
+            </NavLink>
           </div>
 
 
           {/* Desktop Links */}
           <div className="hidden text-white md:flex space-x-6">
-            <NavLink to="/dashboard">Dashboard</NavLink>
+           
             <NavLink to="/students">Students</NavLink>
             <NavLink to="/teachers">Teachers</NavLink>
             <NavLink to="/classes">Classes</NavLink>
-            <NavLink to="/attendance">Attendance</NavLink>
             <NavLink to="/exams">Exams</NavLink>
           </div>
+
+
 
           {/* User Profile + Mobile Menu Button */}
           <div className="flex items-center  space-x-4">
             {/* User Profile (placeholder - can replace with real user data) */}
 
             {user && isAuthenticated ? <><div className="hidden md:flex items-center space-x-2">
-              <img
-                src={userImage}
-                alt="User Avatar"
-                className="h-8 w-8 rounded-full"
-              />
-              <span className="text-white text-xl">{capitalizeFirstLetter(user?.role)}</span>
+              <NavLink to={`${user.role}/profile`}>
+                <img
+                  src={userImage}
+                  alt="User Avatar"
+                  className="h-8 w-8 rounded-full"
+                />
+              </NavLink>
+              <NavLink to={`${user.role}/profile`}>
+                <span className="text-white text-xl">{capitalizeFirstLetter(user?.role)}</span>
+              </NavLink>
             </div>
               <div className="hidden md:block">
                 <button onClick={handleLogout} className="px-4 py-2 rounded-xl bg-blue-500 text-white hover:bg-blue-600 transition duration-300">
@@ -142,3 +180,5 @@ const MobileNavLink = ({ to, children }) => (
 );
 
 export default Navbar;
+
+

@@ -22,6 +22,7 @@ const isAuthenticated = (req, res, next) => {
     }
     
     req.id = decode.user_id
+    req.role=decode.user_role
     next()
 
 } catch (error) {

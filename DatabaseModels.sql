@@ -15,6 +15,7 @@ CREATE TABLE users (
     blood_group VARCHAR(5) NOT NULL,
     gender VARCHAR(10) NOT NULL,
     date_of_birth DATE NOT NULL,
+    profile_image VARCHAR,
     role role_type NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
