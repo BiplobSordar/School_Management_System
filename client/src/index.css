@@ -7,6 +7,7 @@
 
 :root {
   --base-color: #4F46E5; /* Example base color (indigo) */
+  --radius:0.5rem
 }
 
 /* Apply the base color to buttons, links, etc. */

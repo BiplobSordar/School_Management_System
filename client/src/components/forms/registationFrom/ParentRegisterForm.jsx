@@ -19,6 +19,11 @@ const parentRequestSchema = z.object({
   // .regex(/[0-9]/, "Password must contain at least one number")
   // .regex(/[!@#$%^&*(),.?":{}|<>]/, "Password must contain at least one special character")
   child_admission_number: z.string().min(1, "Admission Number is required"),
+  street_address: z.string().min(1, "Address is required"),
+  city: z.string().min(1, "City is required"),
+  state: z.string().min(1, "State is required"),
+  postal_code: z.string().min(1, "Postal code is required"),
+
 
 });
 
@@ -121,6 +126,31 @@ const ParentRequestForm = () => {
           {errors.child_admission_number && <p className="text-red-500 text-sm mt-2">{errors.child_admission_number?.message}</p>}
         </div>
       </fieldset>
+      <fieldset className="space-y-4">
+    <legend className="text-xl font-semibold text-gray-800">Address Information</legend>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label className="block mb-2 text-gray-700">Street Address</label>
+        <input placeholder="Address" {...register("street_address")} className={inputClass} />
+        {errors.street_address && <p className="text-red-500 text-sm mt-2">{errors.street_address?.message}</p>}
+      </div>
+      <div>
+        <label className="block mb-2 text-gray-700">City</label>
+        <input placeholder="City" {...register("city")} className={inputClass} />
+        {errors.city && <p className="text-red-500 text-sm mt-2">{errors.city?.message}</p>}
+      </div>
+      <div>
+        <label className="block mb-2 text-gray-700">State</label>
+        <input placeholder="State" {...register("state")} className={inputClass} />
+        {errors.state && <p className="text-red-500 text-sm mt-2">{errors.state?.message}</p>}
+      </div>
+      <div>
+        <label className="block mb-2 text-gray-700">Postal Code</label>
+        <input placeholder="Postal Code" {...register("postal_code")} className={inputClass} />
+        {errors.postal_code && <p className="text-red-500 text-sm mt-2">{errors.postal_code?.message}</p>}
+      </div>
+    </div>
+  </fieldset>
 
       {/* Submit Button */}
       <div className="text-center">

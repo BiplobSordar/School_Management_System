@@ -8,8 +8,9 @@ import dummuProfileImage from '../assets/user.png'
 import { useModal } from "@/context/ModalContext";
 import AdminEditForm from "@/components/forms/userEditForm/adminEditForm";
 import NotFoundPage from "./NotFound";
-
+import { useParams } from "react-router-dom";
 const UserProfilePage = () => {
+  const { user_id } = useParams();
   const { data, isLoading: profileIsLoading, isError, error } = useGetProfileQuery()
   const { showToast } = useToast()
   const { user } = useSelector((state) => state.auth)

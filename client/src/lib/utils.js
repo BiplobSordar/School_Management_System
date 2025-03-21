@@ -12,3 +12,9 @@ export function capitalizeFirstLetter(str) {
   if (!str) return ""; // Handle empty strings
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }
+
+
+export const convertToLocalTime = (isoString) => {
+  const date = new Date(isoString);
+  return date.toLocaleString(); // Converts to local time based on the user's system
+};

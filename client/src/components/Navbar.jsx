@@ -161,7 +161,7 @@ const Navbar = () => {
 };
 
 // Helper Components for Nav Links
-const NavLink = ({ to, children }) => (
+export const NavLink = ({ to, children }) => (
   <Link
     to={to}
     className="text-white text-xl hover:text-blue-600 transition duration-300"

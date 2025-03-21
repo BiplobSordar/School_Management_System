@@ -195,6 +195,9 @@ RETURNING id;
 SET parent_id = $1
 WHERE id = $2;` , [parent.rows[0].id, student.rows[0].id])
 
+
+
+
         return res.status(201).json({ message: 'Parent registered successfully. After the Child Approval You Can Login To Your Dashbord' });
 
     } catch (error) {

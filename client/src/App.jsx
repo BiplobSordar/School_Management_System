@@ -20,6 +20,8 @@ import UserProfilePage from "./pages/UserProfile";
 import RoleBaseLayout from "./components/layout/RoleBaseLayout";
 import { ModalProvider } from "./context/ModalContext";
 import GlobalModal from "./components/Modal";
+import UserListPage from "./pages/admin/UserListPage";
+import SingleUser from "./pages/admin/SingleUser";
 
 // import AdminLayout from "./components/layout/AdminLayout";
 // import StudentLayout from "./components/layout/StudentLayout";
@@ -51,7 +53,11 @@ const appRoute = createBrowserRouter([
         ),
         children: [
           { path: "", element: <AdminDashboard /> },
-          { path: '/admin/profile', element: <UserProfilePage /> }
+          { path: '/admin/profile', element: <UserProfilePage /> },{
+            path:'/admin/profile/:user_id',element:<SingleUser/>
+          },
+          {path:'/admin/user_lists',element:<UserListPage/>},
+          { path: "/admin/loading", element: <LoadingPage /> },
 
         ],
       },
